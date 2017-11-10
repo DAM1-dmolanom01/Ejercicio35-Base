@@ -22,7 +22,7 @@ public class VentanaPrincipal {
 	JPanel panelEmpezar;
 	JPanel panelPuntuacion;
 	JPanel panelJuego;
-	
+	VentanaPrincipal esta = this;
 	//Todos los botones se meten en un panel independiente.
 	//Hacemos esto para que podamos cambiar después los componentes por otros
 	JPanel [][] panelesJuego;
@@ -139,7 +139,34 @@ public class VentanaPrincipal {
 	 * Método que inicializa todos los lísteners que necesita inicialmente el programa
 	 */
 	public void inicializarListeners(){
-		//TODO
+		for (int i = 0; i < botonesJuego.length; i++) {
+			for (int j = 0; j < botonesJuego.length; j++) {
+				botonesJuego[i][j].addActionListener(new ActionBoton(this,i,j));
+			}
+		}
+		botonEmpezar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				juego = new ControlJuego();
+				for (int i = 0; i < botonesJuego.length; i++) {
+					for (int j = 0; j < botonesJuego.length; j++) {
+						panelesJuego[i][j].removeAll();
+						botonesJuego [i][j] = new JButton("-");
+						panelesJuego[i][j].add(botonesJuego[i][j]);
+					
+					}
+				}
+				refrescarPantalla();
+				actualizarPuntuacion();
+				for (int i = 0; i < botonesJuego.length; i++) {
+					for (int j = 0; j < botonesJuego.length; j++) {
+						botonesJuego[i][j].addActionListener(new ActionBoton(esta,i,j));
+					}
+				}
+				
+			}
+		});
 	}
 	
 	
@@ -156,7 +183,14 @@ public class VentanaPrincipal {
 	 * @param j: posición horizontal de la celda.
 	 */
 	public void mostrarNumMinasAlrededor(int i , int j) {
-		//TODO
+		panelesJuego[i][j].removeAll();
+		JLabel num = new JLabel(" "+juego.getMinasAlrededor(i, j), SwingConstants.CENTER);
+		for (int k = 0; k < botonesJuego.length; k++) {
+			if(juego.getMinasAlrededor(i, j)==k) {
+				num.setForeground(correspondenciaColores[k]);
+			}
+		}
+		panelesJuego[i][j].add(num);
 	}
 	
 	
@@ -166,14 +200,23 @@ public class VentanaPrincipal {
 	 * @post : Todos los botones se desactivan excepto el de volver a iniciar el juego.
 	 */
 	public void mostrarFinJuego(boolean porExplosion) {
-		//TODO
+		if (porExplosion) {
+			JOptionPane.showMessageDialog(ventana, "Ha explotado una mina");
+			for (int i = 0; i < botonesJuego.length; i++) {
+				for (int j = 0; j < botonesJuego.length; j++) {
+					botonesJuego[i][j].setEnabled(false);
+				}
+			}
+		}else {
+			JOptionPane.showMessageDialog(ventana, "Felicidades has ganado");
+		}
 	}
 
 	/**
 	 * Método que muestra la puntuación por pantalla.
 	 */
 	public void actualizarPuntuacion() {
-		//TODO
+	pantallaPuntuacion.setText(" 	"+juego.getPuntuacion());
 	}
 	
 	/**
